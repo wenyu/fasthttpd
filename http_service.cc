@@ -249,7 +249,7 @@ int HTTPService::processRequest() {
       } // token == "Connection"
       else if ( token == "RANGE:" ) {
 	request >> token;
-	if (sscanf(token.c_str(), "bytes=%d-%d", &startPosition, &endPosition) < 2) {
+	if (sscanf(token.c_str(), "bytes=%Ld-%Ld", &startPosition, &endPosition) < 2) {
 	  endPosition = -1;
 	} else {
 	  endPosition++;
@@ -606,7 +606,7 @@ void HTTPService::sendReply200(DocumentType docType) {
   }
 
   struct stat fileStatus;
-  int contentLength;
+  long long contentLength;
 
   if (fstat(fdDoc, &fileStatus) < 0) {
     perror("fstat");
@@ -615,8 +615,8 @@ void HTTPService::sendReply200(DocumentType docType) {
   }
 
   bool send200 = (startPosition < 0);
-  startPosition = min(startPosition, (int)fileStatus.st_size);
-  endPosition = min(endPosition, (int)fileStatus.st_size);
+  startPosition = min(startPosition, (long long)fileStatus.st_size);
+  endPosition = min(endPosition, (long long)fileStatus.st_size);
 
   if (send200) {
     startPosition = 0;
@@ -630,8 +630,9 @@ void HTTPService::sendReply200(DocumentType docType) {
   fprintf(fsock, "Date: %s\r\n", getCurrentTimeString().c_str());
   fprintf(fsock, "Server: Wenyu MiniHTTPD\r\n");
   fprintf(fsock, "Cache-Control: public, max-age=20\r\n");
-  fprintf(fsock, "Content-Range: bytes %d-%d/%d\r\n", startPosition, endPosition-1, (int)fileStatus.st_size);
-  fprintf(fsock, "Content-Length: %d\r\n", contentLength=(endPosition-startPosition) );
+  fprintf(fsock, "Content-Range: bytes %Ld-%Ld/%Ld\r\n",
+      startPosition, endPosition-1, (long long)fileStatus.st_size);
+  fprintf(fsock, "Content-Length: %Ld\r\n", contentLength=(endPosition-startPosition) );
 
   if (keepAlive) {
     fprintf(fsock, "Keep-Alive: timeout=%d\r\n", _timeOut);
@@ -650,13 +651,13 @@ void HTTPService::sendReply200(DocumentType docType) {
   FILE *fCachedDoc = fdopen(fdDoc, "r");
   fseek(fCachedDoc, startPosition, SEEK_SET);
 
-  const int bufferSize = 4096; // Typical LCM of disk block size
+  const long long bufferSize = 65536; // Typical LCM of disk block size
 
   while (contentLength > 0 && healthy) {
     //plog("[%s]: %d bytes remaining.", requestedDocument.c_str(), contentLength);
 
-    int batchSize = min(contentLength, bufferSize);
-    int readSize = 0;
+    long long batchSize = min(contentLength, bufferSize);
+    long long readSize = 0;
     contentLength -= batchSize;
 
     if ((readSize = (int)fread(buffer, 1, batchSize, fCachedDoc)) != batchSize) {

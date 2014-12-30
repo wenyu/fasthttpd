@@ -113,7 +113,8 @@ private:
   bool healthy;
   bool keepAlive;
 
-  int startPosition, endPosition, fdDoc; // The range of file is [startPosition, endPosition)
+  long long startPosition, endPosition;
+  int fdDoc; // The range of file is [startPosition, endPosition)
   int fdMem;
 
   time_t timeStart;
