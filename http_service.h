@@ -29,7 +29,8 @@ typedef enum {
   HTML,
   JPEG,
   GIF,
-  PNG
+  PNG,
+  MP4
 } DocumentType;
 
 typedef struct {
@@ -50,6 +51,7 @@ const MimeCombination mapSuffixType[] = {
   { "CC", TEXT },
   { "C", TEXT },
   { "TXT", TEXT },
+  { "MP4", MP4 }
 
 };
 
@@ -59,7 +61,8 @@ const MimeCombination mapTypeMime[] = {
   { "image/jpeg", JPEG },
   { "image/png", PNG },
   { "text/html", HTML },
-  { "text/plain", TEXT }
+  { "text/plain", TEXT },
+  { "video/mp4", MP4 }
 };
 
 const MimeCombination mapTypeIcon[] = {
@@ -68,7 +71,8 @@ const MimeCombination mapTypeIcon[] = {
   { "image.gif", JPEG },
   { "image.gif", PNG },
   { "index.gif", HTML },
-  { "text.gif", TEXT }
+  { "text.gif", TEXT },
+  { "image.gif", MP4 }
 };
 
 //////////////////////////////////////////////////////////////////////////////////

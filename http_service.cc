@@ -614,10 +614,11 @@ void HTTPService::sendReply200(DocumentType docType) {
     return;
   }
 
+  bool send200 = (startPosition < 0);
   startPosition = min(startPosition, (int)fileStatus.st_size);
   endPosition = min(endPosition, (int)fileStatus.st_size);
 
-  if (startPosition <= 0) {
+  if (send200) {
     startPosition = 0;
     endPosition = fileStatus.st_size;
     fprintf(fsock, "HTTP/1.0 200 OK\r\n");
@@ -628,7 +629,7 @@ void HTTPService::sendReply200(DocumentType docType) {
 
   fprintf(fsock, "Date: %s\r\n", getCurrentTimeString().c_str());
   fprintf(fsock, "Server: Wenyu MiniHTTPD\r\n");
-  fprintf(fsock, "Cache-Control: no-cache\r\n");
+  fprintf(fsock, "Cache-Control: public, max-age=20\r\n");
   fprintf(fsock, "Content-Range: bytes %d-%d/%d\r\n", startPosition, endPosition-1, (int)fileStatus.st_size);
   fprintf(fsock, "Content-Length: %d\r\n", contentLength=(endPosition-startPosition) );
 
