@@ -1,3 +1,11 @@
+DISCLAIMER: DO NOT just clone this repository and submit it as your
+own for your homework. Feel free to use it if you need a temporary
+light-weight HTTP server. I did not use any provided skeleton code
+provided by the course when I was implementing this, I built this
+server from scratch.
+
+-------------------------------------------------
+
 CS290 / Project 3
 Implmenting a Web-Server
 
