@@ -1,7 +1,7 @@
 CXX      = g++
 CXXFLAGS = -O3
 LD       = g++
-LDFLAGS  = -O3 -lnsl -lpthread -ldl -lrt
+LDFLAGS  = -O3 -lpthread -ldl
 
 TARGET	 = myhttpd
 SRCS	 = main.cc \
