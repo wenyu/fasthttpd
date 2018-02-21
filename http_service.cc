@@ -249,7 +249,7 @@ int HTTPService::processRequest() {
       } // token == "Connection"
       else if ( token == "RANGE:" ) {
 	request >> token;
-	if (sscanf(token.c_str(), "bytes=%Ld-%Ld", &startPosition, &endPosition) < 2) {
+	if (sscanf(token.c_str(), "bytes=%lld-%lld", &startPosition, &endPosition) < 2) {
 	  endPosition = -1;
 	} else {
 	  endPosition++;
@@ -580,9 +580,9 @@ void HTTPService::sendDirectory() {
 	}
       }
 
-      fprintf(fsock, "<tr><td valign=\"top\"><img src=\"/icons/%s\"></td><td><a href=\"%s\">%s</a>&nbsp;&nbsp;&nbsp;&nbsp</td><td>%s&nbsp;&nbsp;&nbsp;&nbsp</td><td>%d</td></tr>\r\n", iconPath, dirList[i].first.c_str(), dirList[i].first.c_str(), timeBuff, (int)st.st_size);
+      fprintf(fsock, "<tr><td valign=\"top\"><img src=\"/icons/%s\"></td><td><a href=\"%s\">%s</a>&nbsp;&nbsp;&nbsp;&nbsp</td><td>%s&nbsp;&nbsp;&nbsp;&nbsp</td><td>%lld</td></tr>\r\n", iconPath, dirList[i].first.c_str(), dirList[i].first.c_str(), timeBuff, (long long)st.st_size);
 #else
-      fprintf(fsock, "<tr><td>&nbsp;</td><td><a href=\"%s\">%s</a>&nbsp;&nbsp;&nbsp;&nbsp</td><td>%s&nbsp;&nbsp;&nbsp;&nbsp</td><td>%d</td></tr>\r\n", dirList[i].first.c_str(), dirList[i].first.c_str(), timeBuff, (int)st.st_size);
+      fprintf(fsock, "<tr><td>&nbsp;</td><td><a href=\"%s\">%s</a>&nbsp;&nbsp;&nbsp;&nbsp</td><td>%s&nbsp;&nbsp;&nbsp;&nbsp</td><td>%lld</td></tr>\r\n", dirList[i].first.c_str(), dirList[i].first.c_str(), timeBuff, (long long)st.st_size);
 #endif
     }
   }
@@ -630,9 +630,9 @@ void HTTPService::sendReply200(DocumentType docType) {
   fprintf(fsock, "Date: %s\r\n", getCurrentTimeString().c_str());
   fprintf(fsock, "Server: Wenyu MiniHTTPD\r\n");
   fprintf(fsock, "Cache-Control: public, max-age=20\r\n");
-  fprintf(fsock, "Content-Range: bytes %Ld-%Ld/%Ld\r\n",
+  fprintf(fsock, "Content-Range: bytes %lld-%lld/%lld\r\n",
       startPosition, endPosition-1, (long long)fileStatus.st_size);
-  fprintf(fsock, "Content-Length: %Ld\r\n", contentLength=(endPosition-startPosition) );
+  fprintf(fsock, "Content-Length: %lld\r\n", contentLength=(endPosition-startPosition) );
 
   if (keepAlive) {
     fprintf(fsock, "Keep-Alive: timeout=%d\r\n", _timeOut);
