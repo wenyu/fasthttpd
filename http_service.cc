@@ -113,26 +113,7 @@ int HTTPService::initialize() {
   */
 
   // Setup shard memory
-  fdMem = shm_open(uusi(), O_RDWR | O_CREAT | O_TRUNC | O_EXCL, 0600);
-  if ( fdMem < 0 ) {
-    perror("shm_open");
-    exit(-1);
-  }
-
-  // Allocate space in that shared memory
-  if (ftruncate(fdMem, sizeof(HTTPServiceStatistics)) < 0) {
-    perror("shm/ftruncate");
-    exit(-1);
-  }
-
-  serverInfo = (HTTPServiceStatistics *)
-    mmap(NULL, sizeof(HTTPServiceStatistics), PROT_READ | PROT_WRITE, MAP_SHARED, fdMem, 0);
-
-  if ( !serverInfo ) {
-    perror("shm/mmap");
-    exit(-1);
-  }
-
+  serverInfo = new HTTPServiceStatistics();
   memset(serverInfo, 0, sizeof(HTTPServiceStatistics));
   serverInfo->maxServiceTime = serverInfo->minServiceTime = -1;
 
