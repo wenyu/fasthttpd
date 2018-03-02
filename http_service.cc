@@ -651,12 +651,10 @@ void HTTPService::sendReply200(DocumentType docType) {
   FILE *fCachedDoc = fdopen(fdDoc, "r");
   fseek(fCachedDoc, startPosition, SEEK_SET);
 
-  const long long bufferSize = 65536; // Typical LCM of disk block size
-
   while (contentLength > 0 && healthy) {
     //plog("[%s]: %d bytes remaining.", requestedDocument.c_str(), contentLength);
 
-    long long batchSize = min(contentLength, bufferSize);
+    long long batchSize = min(contentLength, (long long) bufferSize);
     long long readSize = 0;
     contentLength -= batchSize;
 
@@ -766,8 +764,6 @@ void HTTPService::showLog() {
   }
   fprintf(fsock, "Connection: close\r\n");
   fprintf(fsock, "Content-Type: text/plain\r\n\r\n");
-
-  const int bufferSize = 4096; // Typical LCM of disk block size
 
   while ( healthy && !feof(flog) ) {
 

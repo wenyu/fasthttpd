@@ -101,7 +101,7 @@ private:
   void sendReply200(DocumentType docType);
 
 private:
-  static const int bufferSize = 131072;
+  static const int bufferSize = 16 * 1024 * 1024;
   char buffer[bufferSize];
 
   std::string rootDir;
