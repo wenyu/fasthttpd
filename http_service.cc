@@ -649,27 +649,31 @@ void HTTPService::sendReply200(DocumentType docType) {
   }
 
   FILE *fCachedDoc = fdopen(fdDoc, "r");
-  fseek(fCachedDoc, startPosition, SEEK_SET);
+  if (fCachedDoc) {
+    fseek(fCachedDoc, startPosition, SEEK_SET);
 
-  while (contentLength > 0 && healthy) {
-    //plog("[%s]: %d bytes remaining.", requestedDocument.c_str(), contentLength);
+    while (contentLength > 0 && healthy) {
+      //plog("[%s]: %d bytes remaining.", requestedDocument.c_str(), contentLength);
 
-    long long batchSize = min(contentLength, (long long) bufferSize);
-    long long readSize = 0;
-    contentLength -= batchSize;
+      long long batchSize = min(contentLength, (long long) bufferSize);
+      long long readSize = 0;
+      contentLength -= batchSize;
 
-    if ((readSize = (int)fread(buffer, 1, batchSize, fCachedDoc)) != batchSize) {
-      perror("http/read");
-      healthy = false;
+      if ((readSize = (int)fread(buffer, 1, batchSize, fCachedDoc)) != batchSize) {
+        perror("http/read");
+        healthy = false;
+      }
+
+      if (fwrite(buffer, 1, readSize, fsock) != readSize) {
+        perror("http/write");
+        healthy = false;
+      }
     }
 
-    if (fwrite(buffer, 1, readSize, fsock) != readSize) {
-      perror("http/write");
-      healthy = false;
-    }
+    fclose(fCachedDoc);
+  } else {
+    perror("fdopen/fCachedDoc");
   }
-
-  fclose(fCachedDoc);
   close(fdDoc);
   fdDoc = -1;
 }
